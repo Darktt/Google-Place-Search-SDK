@@ -8,15 +8,24 @@
 
 #import "AppDelegate.h"
 
+#import <GoogleMaps/GoogleMaps.h>
+#import "GooglePlaceSearch.h"
+
+NSString *kAPIKey = @"AIzaSyAsh6L8Na587V-OwiE64iymFWOoA-6HUGQ";
+//NSString *kAPIKey = @"AIzaSyAUw_WuJb8Td2xBnBLBiPKQ-VTpG7jOMtw";
+
 @interface AppDelegate ()
 
 @end
 
 @implementation AppDelegate
 
-
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    
+    [GPSServices provideAPIKey:kAPIKey];
+    [GMSServices provideAPIKey:@"AIzaSyDnxYqkKJUz-QHhHbwk_3utkG1KD8ebPW4"];
+    
     return YES;
 }
 
