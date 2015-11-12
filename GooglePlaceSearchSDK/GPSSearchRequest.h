@@ -41,6 +41,7 @@ typedef void (^GPSSearchResult) (GPSSearchRequest *request, NSArray *places, NSE
 + (instancetype)searchRequestWithQuery:(NSString *)query;
 - (instancetype)initWithQuery:(NSString *)query;
 
+/// Set locale, will set language via locale.
 - (void)setLocale:(NSLocale *)locale;
 
 /// Start query places.

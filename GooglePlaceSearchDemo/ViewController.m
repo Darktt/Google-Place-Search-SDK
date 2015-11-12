@@ -19,6 +19,9 @@ NS_ENUM(NSUInteger, ViewTags)
 };
 
 @interface ViewController () <UISearchBarDelegate>
+{
+    
+}
 
 @end
 
@@ -184,6 +187,7 @@ NS_ENUM(NSUInteger, ViewTags)
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar
 {
     [self setActivityViewHidden:NO];
+    [searchBar resignFirstResponder];
     
     GMSMapView *mapView = (GMSMapView *)[self.view viewWithTag:kMapViewTag];
     [mapView clear];
@@ -208,8 +212,6 @@ NS_ENUM(NSUInteger, ViewTags)
     };
     
     [self placeSearchWithQuery:searchBar.text result:resultBlock];
-    
-    [searchBar resignFirstResponder];
 }
 
 @end

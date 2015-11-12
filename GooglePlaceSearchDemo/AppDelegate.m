@@ -11,8 +11,10 @@
 #import <GoogleMaps/GoogleMaps.h>
 #import "GooglePlaceSearch.h"
 
-NSString *kAPIKey = @"AIzaSyAsh6L8Na587V-OwiE64iymFWOoA-6HUGQ";
+NSString *kAPIKey = @"AIzaSyCq2mYsNejmNo0gfmKslL-is5IpArUwEqQ";
 //NSString *kAPIKey = @"AIzaSyAUw_WuJb8Td2xBnBLBiPKQ-VTpG7jOMtw";
+
+NSString *GMSAPIKey = @"AIzaSyAHBl4CutCOFVsv-xDSNEIESz460NV4G_8";
 
 @interface AppDelegate ()
 
@@ -24,7 +26,7 @@ NSString *kAPIKey = @"AIzaSyAsh6L8Na587V-OwiE64iymFWOoA-6HUGQ";
     // Override point for customization after application launch.
     
     [GPSServices provideAPIKey:kAPIKey];
-    [GMSServices provideAPIKey:@"AIzaSyDnxYqkKJUz-QHhHbwk_3utkG1KD8ebPW4"];
+    [GMSServices provideAPIKey:GMSAPIKey];
     
     return YES;
 }
