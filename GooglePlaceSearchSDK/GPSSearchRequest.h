@@ -23,7 +23,7 @@ typedef void (^GPSSearchResult) (GPSSearchRequest *request, NSArray *places, NSE
 @property (assign) CLLocationCoordinate2D location;
 
 /** Defines the distance (in meters) within which to bias place results.
- *  The maximum allowed radius is 50 000 meters.
+ *  The maximum allowed radius is 50000 meters.
  */
 @property (assign) NSUInteger radius;
 

@@ -8,7 +8,6 @@
 #import "GPSPlaceItem.h"
 
 #import <UIKit/UIKit.h>
-#import <CoreLocation/CoreLocation.h>
 #import <GoogleMaps/GoogleMaps.h>
 
 NSString * const kGPSPlaceItemIconKey = @"icon";
@@ -123,26 +122,30 @@ NSString * const kGPSPlaceItemLongitudeKey = @"lng";
     NSString *fileName = [_iconURL lastPathComponent];
     NSString *savePath = [self cachesPathWithFileName:fileName];
     
-    void (^completionsHandler) (NSURLResponse* response, NSData* data, NSError* connectionError) = ^(NSURLResponse *response, NSData *data, NSError *connectionError) {
-        if (connectionError != nil) {
-            NSLog(@"Icon download fail: %@", connectionError);
+    void (^completionsHandler) (NSURL *location, NSURLResponse *response, NSError *error) =^(NSURL *location, NSURLResponse *response, NSError *error) {
+        
+        if (error != nil) {
+            NSLog(@"Icon download fail: %@", error);
             
             return;
         }
         
         NSFileManager *fileManager = [NSFileManager defaultManager];
         if (![fileManager fileExistsAtPath:savePath]) {
-            [data writeToFile:savePath atomically:YES];
+            [fileManager moveItemAtPath:[location absoluteString] toPath:savePath error:nil];
         }
         
         UIImage *iconImage = [UIImage imageWithContentsOfFile:savePath];
         [self setIcon:iconImage];
     };
     
-    NSURLRequest *request = [NSURLRequest requestWithURL:_iconURL];
-    NSOperationQueue *operation = [NSOperationQueue mainQueue];
+    NSURLSessionConfiguration *sessionConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
+    NSOperationQueue *queue = [NSOperationQueue new];
+    NSURLSession *session = [NSURLSession sessionWithConfiguration:sessionConfiguration delegate:nil delegateQueue:queue];
+    NSURLSessionDownloadTask *downloadTask = [session downloadTaskWithURL:_iconURL completionHandler:completionsHandler];
+    [downloadTask resume];
     
-    [NSURLConnection sendAsynchronousRequest:request queue:operation completionHandler:completionsHandler];
+    [queue release];
 }
 
 @end

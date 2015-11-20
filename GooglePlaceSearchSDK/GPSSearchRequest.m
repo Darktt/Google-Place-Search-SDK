@@ -29,8 +29,17 @@
 
 #pragma mark - GPSSearchRequest
 
-//NSString * const DefaultURL = @"https://maps.googleapis.com/maps/api/place/textsearch/json?";
+#define TEXT_SEARCH 0
+
+#if TEXT_SEARCH
+
+NSString * const DefaultURL = @"https://maps.googleapis.com/maps/api/place/textsearch/json?";
+
+#else
+
 NSString * const DefaultURL = @"https://maps.googleapis.com/maps/api/place/nearbysearch/json?";
+
+#endif
 
 @interface GPSSearchRequest ()
 {
@@ -77,6 +86,7 @@ NSString * const DefaultURL = @"https://maps.googleapis.com/maps/api/place/nearb
     [self removeObserver:self forKeyPath:@"location"];
     
     [_query release];
+    [_nextPageToken release];
     
     [self setLanguage:nil];
     
@@ -434,8 +444,13 @@ NSString * const DefaultURL = @"https://maps.googleapis.com/maps/api/place/nearb
     NSString *APIKey = [services APIKey];
     
     NSMutableString *URLString = [NSMutableString stringWithString:DefaultURL];
-//    [URLString appendFormat:@"query=%@", encodedQuery];
+    
+#if TEXT_SEARCH
+    [URLString appendFormat:@"query=%@", encodedQuery];
+#else
     [URLString appendFormat:@"keyword=%@", encodedQuery];
+#endif
+    
     [URLString appendFormat:@"&key=%@", APIKey];
     [URLString appendFormat:@"&opennow=%@", self.openNow ? @"true" : @"false"];
     
@@ -479,7 +494,7 @@ NSString * const DefaultURL = @"https://maps.googleapis.com/maps/api/place/nearb
 
 - (void)startSearch
 {
-    void (^completionsHandler) (NSURLResponse* response, NSData* data, NSError* connectionError) = ^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+    void (^completionsHandler) (NSData *data, NSURLResponse *response, NSError *error) = ^(NSData *data, NSURLResponse *response, NSError *error) {
         
         GPSSearchResult responseHandler = ^(GPSSearchRequest *request, NSArray *places, NSError *error) {
             void (^operationBlock) (void) = ^{
@@ -493,8 +508,8 @@ NSString * const DefaultURL = @"https://maps.googleapis.com/maps/api/place/nearb
         };
         
         // Conection error.
-        if (connectionError != nil) {
-            responseHandler(self, nil, connectionError);
+        if (error != nil) {
+            responseHandler(self, nil, error);
             
             return;
         }
@@ -553,8 +568,12 @@ NSString * const DefaultURL = @"https://maps.googleapis.com/maps/api/place/nearb
     };
     
     NSURLRequest *request = [self requestWithParameters];
+    NSURLSessionConfiguration *sessionConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
     NSOperationQueue *queue = [NSOperationQueue new];
-    [NSURLConnection sendAsynchronousRequest:request queue:queue completionHandler:completionsHandler];
+    NSURLSession *session = [NSURLSession sessionWithConfiguration:sessionConfiguration delegate:nil delegateQueue:queue];
+    NSURLSessionDataTask *dataTask = [session dataTaskWithRequest:request completionHandler:completionsHandler];
+    [dataTask resume];
+    
     [queue release];
 }
 
